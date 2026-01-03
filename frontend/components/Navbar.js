@@ -1,6 +1,6 @@
 export function Navbar() {
   return `
-  <div>
+  <div >
     <nav class="p-[8px] bg-black text-white">
       <h2 class="text-[12px] text-white font-bold text-center">Split the cost with pay in 3.  Find out more</h2>
     </nav>
@@ -43,11 +43,29 @@ export function Navbar() {
       <i class="fa-solid fa-cart-shopping"></i>
       <button class="bg-black text-white text-[18px] font-semibold px-10 py-2 rounded-sm">CHECKOUT</button>
     </div>
+
+  
   
   
   
   
   </div>
+
+    <div class="mt-[30px]">
+
+    <ul class="flex justify-center items-center gap-12 font-semibold text-[18px] uppercase">
+        <li>Women</li>
+        <li>Men</li>
+        <li>Boys</li>
+        <li>Girls</li>
+        <li>Home</li>
+        <li>Baby</li>
+        <li>Beauty</li>
+        <li>Furniture</li>
+    </ul>
+
+      
+    </div>
     
     </div>
   `;
