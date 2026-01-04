@@ -1,3 +1,4 @@
+import { Footer } from "./Footer.js"
 export function Homepage(){
     return `
        <div class="flex ">
@@ -68,7 +69,7 @@ export function Homepage(){
 
 </div>
 
-       <div class="flex gap-4 max-w-11/12 mx-auto uppercase font-semibold pb-[20px]">
+       <div class="flex gap-4 max-w-11/12 mx-auto uppercase font-semibold pb-[50px]">
            <div class="flex flex-col w-1/6">
                  <img src="row1.jpg" class=" h-[280px]  object-cover" />
                  <h1 class="pt-[10px]">Cold weather ready</h1>
@@ -92,11 +93,142 @@ export function Homepage(){
              
 </div>
 
-<div class="pt-[80px] bg-white ">
+
 
 </div>
 
+
+<div class="pt-[40px] pb-[50px] bg-white grid grid-cols-8 gap-[7px] w-11/12 mx-auto ">
+
+  <!-- Image 1 -->
+  <div class="grid ">
+    <img src="g1.jpg" class="col-start-1 row-start-1 w-full h-[250px] object-cover" alt="Image 1">
+    <div class="col-start-1 row-start-1 flex items-center justify-center">
+      <span class="text-white text-[24px] px-3 py-1 rounded">Robben again</span>
+    </div>
+  </div>
+
+  <!-- Image 2 -->
+  <div class="grid h-[250px]">
+    <img src="g2.jpg" class="col-start-1 row-start-1 w-full h-[250px] object-cover" alt="Image 2">
+    <div class="col-start-1 row-start-1 flex items-center justify-center">
+      <span class="text-white text-[24px] px-3 py-1 rounded">Robben again</span>
+    </div>
+  </div>
+
+  <!-- Image 3 -->
+  <div class="grid h-[250px]">
+    <img src="g3.jpg" class="col-start-1 row-start-1 w-full h-[250px] object-cover" alt="Image 3">
+    <div class="col-start-1 row-start-1 flex items-center justify-center">
+      <span class="text-white text-[24px] px-3 py-1 rounded">Robben again</span>
+    </div>
+  </div>
+
+  <!-- Image 4 -->
+  <div class="grid h-[250px]">
+    <img src="g1.jpg" class="col-start-1 row-start-1 w-full h-[250px] object-cover" alt="Image 4">
+    <div class="col-start-1 row-start-1 flex items-center justify-center">
+      <span class="text-white  px-3 py-1 rounded">Robben again</span>
+    </div>
+  </div>
+
+  <!-- Image 5 -->
+  <div class="grid h-[250px]">
+    <img src="g2.jpg" class="col-start-1 row-start-1 w-full h-[250px] object-cover" alt="Image 5">
+    <div class="col-start-1 row-start-1 flex items-center justify-center">
+      <span class="text-white text-[24px] px-3 py-1 rounded">Robben again</span>
+    </div>
+  </div>
+
+  <!-- Image 6 -->
+  <div class="grid h-[250px]">
+    <img src="g3.jpg" class="col-start-1 row-start-1 w-full h-[250px] object-cover" alt="Image 6">
+    <div class="col-start-1 row-start-1 flex items-center justify-center">
+      <span class="text-white text-[24px] px-3 py-1 rounded">Robben again</span>
+    </div>
+  </div>
+
+  <!-- Image 7 -->
+  <div class="grid h-[250px]">
+    <img src="g1.jpg" class="col-start-1 row-start-1 w-full h-[250px] object-cover" alt="Image 7">
+    <div class="col-start-1 row-start-1 flex items-center justify-center">
+      <span class="text-white text-[24px]  px-3 py-1 rounded">Robben again</span>
+    </div>
+  </div>
+
+  <!-- Image 8 -->
+  <div class="grid h-[250px]">
+    <img src="g2.jpg" class="col-start-1 row-start-1 w-full h-[250px] object-cover" alt="Image 8">
+    <div class="col-start-1 row-start-1 flex items-center justify-center">
+      <span class="text-white text-[24px] px-3 py-1 rounded">Robben again</span>
+    </div>
+  </div>
+
 </div>
+
+<div class="border-1 border-gray-100"></div>
+<div class="mt-[100px]"></div>
+
+   <section class="h-[60%] flex items-center justify-center px-4">
+    <div class="max-w-md w-full text-center space-y-6">
+
+      <!-- Icon -->
+      <div class="flex justify-center">
+        <div class="w-10 h-10 flex items-center justify-center border rounded">
+          ✉️
+        </div>
+      </div>
+
+      <!-- Heading -->
+      <h2 class="text-lg font-semibold tracking-widest">
+        BE IN THE KNOW
+      </h2>
+
+      <!-- Description -->
+      <p class="text-sm text-gray-600 leading-relaxed">
+        Keep up to date with the latest Next news, including exclusive offers
+        and not to be missed sale and store events.
+        <br />
+        Enter your email address below to opt in to email marketing.
+      </p>
+
+      <!-- Form -->
+      <div class="space-y-4">
+        <div class="text-left">
+          <label class="text-sm font-medium block mb-1">
+            Email Address
+          </label>
+          <input
+            type="email"
+            placeholder=""
+            class="w-full border border-gray-400 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-black"
+          />
+        </div>
+
+        <button
+          class="w-full bg-black text-white py-3 font-semibold tracking-wide hover:opacity-90 transition"
+        >
+          SUBSCRIBE
+        </button>
+      </div>
+
+      <!-- Footer text -->
+      <p class="text-xs text-gray-600">
+        See Next's full
+        <a href="#" class="underline">Terms and Conditions</a>
+        and
+        <a href="#" class="underline">Privacy Policy</a>
+        to find out more.
+      </p>
+
+    </div>
+  </section>
+  ${Footer()}
+
+
+
+
+
 
     `
 }
