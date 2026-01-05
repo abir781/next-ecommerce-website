@@ -54,7 +54,8 @@ export function Navbar() {
   <div class="mt-[30px]">
   <ul class="flex justify-center items-center gap-12 font-semibold text-[18px] uppercase">
    <li class="relative group cursor-pointer">
-  Women
+   <a href="women.html"> Women</a>
+ 
 
   <!-- DROPDOWN -->
 <div

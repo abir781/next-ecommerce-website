@@ -1,130 +1,73 @@
 const express = require('express')
 const app = express()
+const cors = require('cors');
 const port = 3000
+const { MongoClient, ServerApiVersion } = require('mongodb');
 
-const products=
-  [
-  {
-    "name": "Soft Cotton Night Pajama Set",
-    "price": 1499,
-    "size": ["S", "M", "L", "XL"],
-    "brand": "LunaWear",
-    "material": "100% Cotton",
-    "color": "Pink",
-    "style": "Regular Fit",
-    "category": "Women Pajamas"
-  },
-  {
-    "name": "Floral Printed Pajama",
-    "price": 1699,
-    "size": ["M", "L", "XL"],
-    "brand": "DreamLady",
-    "material": "Cotton Blend",
-    "color": "Blue",
-    "style": "Relaxed Fit",
-    "category": "Women Pajamas"
-  },
-  {
-    "name": "Silk Comfort Pajama Set",
-    "price": 2499,
-    "size": ["S", "M", "L"],
-    "brand": "Silken",
-    "material": "Silk",
-    "color": "Maroon",
-    "style": "Luxury Fit",
-    "category": "Women Pajamas"
-  },
-  {
-    "name": "Checked Winter Pajama",
-    "price": 1899,
-    "size": ["M", "L", "XL"],
-    "brand": "CozyHome",
-    "material": "Flannel",
-    "color": "Red",
-    "style": "Warm Fit",
-    "category": "Women Pajamas"
-  },
-  {
-    "name": "Stretch Lounge Pajama",
-    "price": 1299,
-    "size": ["S", "M", "L", "XL"],
-    "brand": "FlexiWear",
-    "material": "Cotton Spandex",
-    "color": "Grey",
-    "style": "Slim Fit",
-    "category": "Women Pajamas"
-  },
-  {
-    "name": "Printed Rayon Pajama",
-    "price": 1399,
-    "size": ["M", "L"],
-    "brand": "UrbanSleep",
-    "material": "Rayon",
-    "color": "Green",
-    "style": "Casual Fit",
-    "category": "Women Pajamas"
-  },
-  {
-    "name": "Classic Solid Pajama",
-    "price": 1199,
-    "size": ["S", "M", "L", "XL"],
-    "brand": "EveryNight",
-    "material": "Cotton",
-    "color": "Black",
-    "style": "Regular Fit",
-    "category": "Women Pajamas"
-  },
-  {
-    "name": "Satin Night Pajama",
-    "price": 2299,
-    "size": ["S", "M", "L"],
-    "brand": "NightGlow",
-    "material": "Satin",
-    "color": "Purple",
-    "style": "Elegant Fit",
-    "category": "Women Pajamas"
-  },
-  {
-    "name": "Polka Dot Pajama Set",
-    "price": 1599,
-    "size": ["M", "L", "XL"],
-    "brand": "SweetDreams",
-    "material": "Cotton Blend",
-    "color": "White",
-    "style": "Loose Fit",
-    "category": "Women Pajamas"
-  },
-  {
-    "name": "High Waist Lounge Pajama",
-    "price": 1799,
-    "size": ["S", "M", "L"],
-    "brand": "ComfortZone",
-    "material": "Modal",
-    "color": "Beige",
-    "style": "Comfort Fit",
-    "category": "Women Pajamas"
-  },
-  {
-    "name": "Summer Breathable Pajama",
-    "price": 1099,
-    "size": ["S", "M", "L", "XL"],
-    "brand": "AirSoft",
-    "material": "Linen Cotton",
-    "color": "Light Blue",
-    "style": "Relaxed Fit",
-    "category": "Women Pajamas"
-  },
-  {
-    "name": "Velvet Winter Pajama",
-    "price": 2699,
-    "size": ["M", "L", "XL"],
-    "brand": "WarmNest",
-    "material": "Velvet",
-    "color": "Navy Blue",
-    "style": "Cozy Fit",
-    "category": "Women Pajamas"
+
+const uri = "mongodb+srv://next_ecommerce:nxZaRWEbvbv3eKvZ@cluster0.knekqnq.mongodb.net/?appName=Cluster0";
+
+
+app.use(cors());
+
+//db_name:next_ecommerce pass: nxZaRWEbvbv3eKvZ
+
+
+   
+
+
+
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
   }
-]
+});
+async function run() {
+  try {
+
+    const nextproductcollection=client.db('next_ecommercedb').collection('womanproductcollection');
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+
+
+    app.get('/womanproduct',async(req,res)=>{
+         const result=await nextproductcollection.find().toArray();
+          res.send(result);
+ 
+    
+})
+
+
+ app.get("/womanproduct/brand/:brandName", async (req, res) => {
+  try {
+    const brand = req.params.brandName.trim(); // extra space remove
+
+    // Case-insensitive search
+    const products = await nextproductcollection
+      .find({ brand: { $regex: `^${brand}$`, $options: "i" } })
+      .toArray();
+
+    res.send(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Failed to fetch products" });
+  }
+});
+
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } finally {
+    // Ensures that the client will close when you finish/error
+    // await client.close();
+  }
+}
+run().catch(console.dir);
+
+
 
 
 
@@ -132,10 +75,7 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-app.get('/womanproduct',(req,res)=>{
-  res.json(products);
-    
-})
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
