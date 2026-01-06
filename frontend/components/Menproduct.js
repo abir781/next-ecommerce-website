@@ -20,7 +20,11 @@ function menProductbyall(selectedColor) {
 
 function renderman(products) {
     const container = document.getElementById("men-products"); // updated ID
+
+
     container.innerHTML = "";
+
+    
 
     // Optional: filter for category "Men Pajamas"
     const menProducts = products.filter(
@@ -30,8 +34,12 @@ function renderman(products) {
     container.className =
       "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4 max-w-11/12 mx-auto";
 
+    
+
     menProducts.forEach(product => {
         const card = document.createElement("div");
+          
+       
         card.className =
           "group relative border border-gray-200 rounded-lg overflow-hidden bg-white transition-all duration-300 hover:shadow-lg cursor-pointer flex flex-col";
 
@@ -54,7 +62,10 @@ function renderman(products) {
             </div>
           </div>
         `;
-        container.appendChild(card);
+         const anchor = document.createElement("a");
+        anchor.href = `/product.html?id=${product._id}`;
+        anchor.appendChild(card);
+        container.appendChild(anchor);
     });
 }
 

@@ -40,7 +40,8 @@ export function Navbar() {
     <div class="text-[24px] space-x-10 flex justify-center items-center">
       <i class="fa-regular fa-heart"></i>
       <i class="fa-solid fa-person"></i>
-      <i class="fa-solid fa-cart-shopping"></i>
+      <a href="shoppingbag.html"><i class="fa-solid fa-cart-shopping"></i></a>
+      
       <button class="bg-black text-white text-[18px] font-semibold px-10 py-2 rounded-sm">CHECKOUT</button>
     </div>
 

@@ -66,6 +66,26 @@ async function run() {
     
 })
 
+const { ObjectId } = require("mongodb");
+
+app.get('/menproduct/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    // Convert string id to ObjectId
+    const product = await nextproductcollectionformen.findOne({ _id: new ObjectId(id) });
+
+    if (!product) {
+      return res.status(404).send({ message: "Product not found" });
+    }
+
+    res.send(product);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Server error" });
+  }
+});
+
 
 
  app.get("/menproduct/color/:colorName", async (req, res) => {
