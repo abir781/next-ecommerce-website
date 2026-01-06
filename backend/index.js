@@ -29,6 +29,8 @@ async function run() {
   try {
 
     const nextproductcollection=client.db('next_ecommercedb').collection('womanproductcollection');
+
+    const nextproductcollectionformen = client.db('next_ecommercedb').collection('menproductcollection');
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
@@ -48,6 +50,31 @@ async function run() {
     // Case-insensitive search
     const products = await nextproductcollection
       .find({ brand: { $regex: `^${brand}$`, $options: "i" } })
+      .toArray();
+
+    res.send(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Failed to fetch products" });
+  }
+});
+
+    app.get('/menproduct',async(req,res)=>{
+         const result=await nextproductcollectionformen.find().toArray();
+          res.send(result);
+ 
+    
+})
+
+
+
+ app.get("/menproduct/color/:colorName", async (req, res) => {
+  try {
+    const color= req.params.colorName.trim(); // extra space remove
+
+    // Case-insensitive search
+    const products = await nextproductcollectionformen
+      .find({ color: { $regex: `^${color}$`, $options: "i" } })
       .toArray();
 
     res.send(products);

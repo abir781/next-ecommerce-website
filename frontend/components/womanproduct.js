@@ -116,4 +116,3 @@ function renderwoman(products){
 
 // Call the function
 // womenProductbyall();
-
