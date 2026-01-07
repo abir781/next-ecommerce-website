@@ -1,19 +1,24 @@
 const shoppingDiv = document.getElementById("shopping");
-const cart = JSON.parse(localStorage.getItem("cart")) || [];
+renderbag();
 
-if (cart.length === 0) {
-  shoppingDiv.innerHTML = "<p>Cart empty</p>";
-} else {
+function renderbag() {
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  // calculate total
+  if (cart.length === 0) {
+    shoppingDiv.innerHTML = "<p>Cart empty</p>";
+    return;
+  }
+
+  // ✅ calculate total (ONLY calculation)
   const total = cart.reduce((sum, item) => {
     return sum + Number(item.price);
   }, 0);
 
+  // ✅ render UI (ONLY rendering)
   shoppingDiv.innerHTML = `
     <div style="max-width:900px; margin:auto; display:flex; gap:40px;">
 
-      <!-- LEFT: CART ITEMS -->
+      <!-- LEFT -->
       <div style="flex:2;">
         ${cart.map(item => `
           <div style="
@@ -35,33 +40,32 @@ if (cart.length === 0) {
               </div>
             </div>
 
-            <div style="font-weight:600;">
-              ৳${item.price}
+            <div>
+              <div style="font-weight:600;">৳${item.price}</div>
+              <button
+                class="bg-sky-500 px-3 py-1 rounded-sm text-white font-bold"
+                onclick="removeItem('${item._id}')"
+              >
+                Remove
+              </button>
             </div>
           </div>
-         
         `).join("")}
-         <div class="  text-right">
-             <p>Total: ${total}</p>
-          </div>
+
+        <p style="text-align:right; font-weight:600;">
+          Total: ৳${total}
+        </p>
       </div>
 
-      <!-- RIGHT: TOTAL & CHECKOUT -->
+      <!-- RIGHT -->
       <div style="
         flex:1;
         border:1px solid #ddd;
         padding:20px;
         height:fit-content;
       ">
-        <h3 style="margin-top:0;">Total</h3>
-
-        <p style="
-          font-size:20px;
-          font-weight:700;
-          margin:16px 0;
-        ">
-          ৳${total}
-        </p>
+        <h3>Total</h3>
+        <p style="font-size:20px; font-weight:700;">৳${total}</p>
 
         <button style="
           width:100%;
@@ -79,3 +83,32 @@ if (cart.length === 0) {
     </div>
   `;
 }
+
+
+
+    function removeItem(id) {
+   
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    // 2️⃣ Find the index of the item to remove
+    const index = cart.findIndex(item => item._id === id);
+
+    // 3️⃣ Remove the item if found
+    if (index !== -1) {
+        cart.splice(index, 1); // modifies the existing array in-place
+        // 4️⃣ Save the updated cart back to localStorage
+        localStorage.setItem("cart", JSON.stringify(cart));
+        console.log(`Item with id ${id} removed from cart!`);
+    } else {
+        console.log(`Item with id ${id} not found in cart.`);
+    }
+    renderbag();
+    
+  }
+
+//    function removeItem() {
+//     // Example logic: console log or actual item removal
+//     console.log("Item removed!");
+//     // jodi kono element remove korte hoy:
+//     // document.getElementById("itemId").remove();
+//   }

@@ -97,7 +97,10 @@ function renderwoman(products){
           </div>
         `;
 
-        container.appendChild(card);
+        const anchor = document.createElement("a");
+        anchor.href = `/singlewomanproduct.html?id=${product._id}`;
+        anchor.appendChild(card);
+        container.appendChild(anchor);
       });
 }
 
