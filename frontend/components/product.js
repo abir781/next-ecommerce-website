@@ -1,7 +1,24 @@
+function addToBag(product) {
+  // 1️⃣ Read existing cart, or empty array if not exist
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-window.addToBag = function () {
-  alert("Product added to bag 🛒");
-};
+  // 2️⃣ Check if product already exists
+  const existingProductIndex = cart.findIndex(p => p._id === product._id);
+
+  if (existingProductIndex !== -1) {
+    // Already in cart → increase quantity
+    cart[existingProductIndex].quantity += 1;
+  } else {
+    // New product → add quantity field
+    cart.push({ ...product, quantity: 1 });
+  }
+
+  // 3️⃣ Save updated cart back to localStorage
+  localStorage.setItem("cart", JSON.stringify(cart));
+
+  alert(`${product.title} added to bag 🛒`);
+  console.log(cart);
+}
 
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -59,11 +76,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       <!-- Action Buttons -->
       <div class="flex items-center gap-4 mt-6">
 
-      <button
-  onclick="addToBag()"
-  class="flex-1 bg-black text-white py-3 rounded-md font-medium hover:bg-gray-900 transition">
-  ADD TO BAG
-</button>
+   <button
+      id="add-to-bag-btn"
+      class="flex-1 bg-black text-white py-3 rounded-md font-medium hover:bg-gray-900 transition">
+      ADD TO BAG
+    </button>
 
         <button
           class="w-12 h-12 border border-gray-300 rounded-md flex items-center justify-center hover:border-black transition">
@@ -75,12 +92,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     </div>
   </div>
 `;
+const addToBagBtn = document.getElementById("add-to-bag-btn");
+addToBagBtn.addEventListener("click", () => {
+  addToBag(product); // ✅ product available here
+});
 
     } catch (error) {
         productholder.innerHTML = "<p>Error loading product</p>";
         console.error(error);
     }
 
+   
+
+
+
+
 });
+
 
 
