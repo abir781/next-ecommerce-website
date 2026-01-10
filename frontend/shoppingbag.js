@@ -67,7 +67,7 @@ function renderbag() {
         <h3>Total</h3>
         <p style="font-size:20px; font-weight:700;">৳${total}</p>
 
-        <button style="
+    <button style="
           width:100%;
           padding:12px;
           background:black;
@@ -75,9 +75,10 @@ function renderbag() {
           border:none;
           font-size:16px;
           cursor:pointer;
-        ">
-          CHECKOUT
-        </button>
+        "
+        onclick="goToCheckout()">
+  CHECKOUT
+</button>
       </div>
 
     </div>
@@ -104,6 +105,11 @@ function renderbag() {
     }
     renderbag();
     
+  }
+
+    function goToCheckout() {
+    // Example: redirect to checkout.html
+    window.location.href = "checkout.html";
   }
 
 //    function removeItem() {

@@ -52,6 +52,7 @@
       });
 
       const tokenData = await tokenResponse.json();
+      console.log(tokenData);
       const idToken = tokenData.id_token;
 
       const payload = JSON.parse(atob(idToken.split(".")[1]));
