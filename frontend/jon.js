@@ -13,7 +13,11 @@ const auth = getAuth(app);
 
 // 🔹 DOM elements
 const shoppingDiv = document.getElementById("shopping");
-const logoutBtn = document.getElementById("logoutBtn"); // make sure this exists in HTML
+const logoutBtn = document.getElementById("logoutBtn");
+
+// make sure this exists in HTML
+
+window.totalAmount = 0;
 
 // 🔐 PRIVATE ROUTE CHECK
 onAuthStateChanged(auth, (user) => {
@@ -40,6 +44,15 @@ logoutBtn.addEventListener("click", () => {
 // 🔹 Render shopping cart
 function rendercheck() {
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+   const total = cart.reduce((sum, item) => {
+    return sum + Number(item.price);
+  }, 0);
+
+  window.totalAmount = total;
+    const amounter = document.getElementById('amount');
+  amounter.value = Number(total);
+
 
   shoppingDiv.innerHTML = `
     <div style="max-width:900px; margin:auto; display:flex; gap:40px;">
@@ -77,6 +90,9 @@ function rendercheck() {
             </div>
           </div>
         `).join('')}
+        <div>
+          <p class="text-right font-bold text-[24px]">total:${total}</p>
+        </div>
       </div>
     </div>
   `;

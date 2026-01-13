@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Send Money</title>
+</head>
+<body>
+<h2>Send Money via SSLCommerz Sandbox</h2>
+
+<label>Amount (BDT): <input type="number" id="amount" value="1500"></label>
+<button id="payBtn">Pay Now</button>
+
+<script>
+document.getElementById("payBtn").addEventListener("click", async () => {
+  try {
+    const amount = document.getElementById("amount").value;
+
+    console.log("Button clicked, amount:", amount);
+
+    const res = await fetch("http://localhost:3000/create-sslcommerz-session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ amount: amount, productId: "test001" })
+    });
+
+    const data = await res.json();
+    console.log("SSLCommerz session data:", data);
+
+    if (data.GatewayPageURL) {
+      // Redirect to payment page
+      window.location.href = data.GatewayPageURL;
+    } else {
+      alert("Payment session failed");
+      console.log(data);
+    }
+
+  } catch (err) {
+    console.error("Error:", err);
+    alert("Something went wrong");
+  }
+});
+</script>
+</body>
+</html>
+

@@ -6,7 +6,9 @@
      <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body>
-    <h1>checkout product</h1>
+     <div id="navbar" class="sticky top-0 z-50 bg-white mb-[10px]">
+
+  </div>
 
     <button id="logoutBtn" class="btn btn-active btn-warning">Log out</button>
 
@@ -35,6 +37,9 @@
 
         </div>
 
+        
+   
+
    
 
           <div id="shopping">
@@ -43,8 +48,29 @@
 
     </div>
 
+     <h3>Amount: <input id="amount"  class="border-2 border-black" readonly></h3>
+    <button onclick="pay()" class="px-4 py-2 bg-sky-500 mt-5 ml-4">Pay Now</button>
+    
+
+     <script>
+    async function pay() {
+
+         const amount = window.totalAmount || 0;
+        
+        const res = await fetch('http://localhost:3000/pay', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ amount: amount })
+        });
+        const data = await res.json();
+        if(data.url) window.location.href = data.url;
+        else alert('Error: ' + data.error);
+    }
+    </script>
+
    
     <script src="danialves.js"></script>
+    <script type="module" src="main.js"></script>
     <script type="module" src="jon.js"></script>
     <script type="module" src="login.js"></script>
     
