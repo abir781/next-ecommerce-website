@@ -652,7 +652,7 @@ app.get('/womanproduct/:id', async (req, res) => {
       total_amount: amount,
       currency: "BDT",
       tran_id: tran_id,
-      success_url: `http://localhost:${PORT}/success?orderId=${orderId}`,
+      success_url: `http://localhost:${PORT}/success?orderId=${orderId}&tran_id=${tran_id}`,
       fail_url: `http://localhost:${PORT}/fail?orderId=${orderId}`,
       cancel_url: `http://localhost:${PORT}/cancel?orderId=${orderId}`,
 
@@ -718,6 +718,17 @@ app.get('/womanproduct/:id', async (req, res) => {
     console.error("❌ /pay API Error:", err);
     res.json({ error: "Something went wrong" });
   }
+});
+
+app.post("/success", async (req, res) => {
+  const { orderId, tran_id } = req.query;
+
+  await ordercool.updateOne(
+    { _id: new ObjectId(orderId) },
+    { $set: { status: "CONFIRMED", paidAt: new Date(), transactionId: tran_id } }
+  );
+
+   res.redirect(`http://127.0.0.1:5501/payment-success.html?orderId=${orderId}&clearCart=true`);
 });
 
 
