@@ -42,7 +42,8 @@ logoutBtn.addEventListener("click", () => {
 });
 
 // 🔹 Render shopping cart
-function rendercheck() {
+export function rendercheck() {
+  
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
    const total = cart.reduce((sum, item) => {
@@ -96,6 +97,8 @@ function rendercheck() {
       </div>
     </div>
   `;
+
+  return cart;
 }
 rendercheck();
 

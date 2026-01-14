@@ -488,6 +488,8 @@ const PORT = 3000;
 const STORE_ID = "acd6963b6c9c4521";
 const STORE_PASS = "acd6963b6c9c4521@ssl";
 
+
+
 // =================== MIDDLEWARE ===================
 app.use(cors());
 app.use(express.json());
@@ -515,6 +517,8 @@ async function run() {
     const nextproductcollection=client.db('next_ecommercedb').collection('womanproductcollection');
 
     const nextproductcollectionformen = client.db('next_ecommercedb').collection('menproductcollection');
+
+      const ordercool = client.db('next_ecommercedb').collection('ordercollections4');
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
@@ -611,88 +615,108 @@ app.get('/womanproduct/:id', async (req, res) => {
     // =================== SSLCommerz PAYMENT ===================
   // Payment endpoint
 
-  app.post("/pay", async (req, res) => {
-  console.log("🔔 Payment request:", req.body);
-  
-  const { amount } = req.body;
-  
-  if (!amount || amount < 10) {
-    return res.json({ error: "Minimum 10 BDT" });
-  }
-
-  const tran_id = "TXN_" + Date.now();
-  
-  // ✅ SSLCommerz Sandbox TEST Credentials
-  const postData = {
-    store_id: "testbox",  // ✅ Sandbox test ID
-    store_passwd: "qwerty", // ✅ Sandbox test password
-    total_amount: amount,
-    currency: "BDT",
-    tran_id: tran_id,
-    success_url: `http://localhost:${PORT}/success`,
-    fail_url: `http://localhost:${PORT}/fail`,
-    cancel_url: `http://localhost:${PORT}/cancel`,
-    
-    product_name: "Test Product",
-    product_category: "Test",
-    product_profile: "general",
-    
-    cus_name: "Test Customer",
-    cus_email: "test@email.com",
-    cus_add1: "Dhaka",
-    cus_city: "Dhaka",
-    cus_country: "Bangladesh",
-    cus_phone: "01700000000",
-    
-    shipping_method: "NO",
-    num_of_item: 1
-  };
-
-  console.log("📤 Post Data:", postData);
-
+ app.post("/pay", async (req, res) => {
   try {
-    const response = await fetch("https://sandbox.sslcommerz.com/gwprocess/v4/api.php", {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Accept": "application/json"
-      },
-      body: new URLSearchParams(postData).toString()
-    });
-    
-    console.log("📥 Response Status:", response.status);
-    
-    const responseText = await response.text();
-    console.log("📥 Raw Response:", responseText.substring(0, 500));
-    
-    try {
-      const data = JSON.parse(responseText);
-      console.log("📥 Parsed Data:", data);
-      
-      if (data.status === 'SUCCESS' && data.GatewayPageURL) {
-        res.json({ 
-          success: true, 
-          url: data.GatewayPageURL,
-          message: "Payment session created"
-        });
-      } else {
-        res.json({ 
-          error: data.failedreason || "Payment failed",
-          status: data.status,
-          details: data
-        });
+    console.log("🔔 Payment request body:", req.body);
+
+    // 1️⃣ Extract products
+    const { products, amount } = req.body;
+
+    // 2️⃣ Validation
+    if (!products || !Array.isArray(products) || products.length === 0) {
+      return res.json({ error: "Invalid products" });
+    }
+
+    if (!amount || amount < 10) {
+      return res.json({ error: "Minimum 10 BDT required" });
+    }
+
+    // 3️⃣ Insert into ordercool collection
+    const orderDoc = {
+      products,
+      totalAmount: amount,  // backend trusted amount
+      status: "PENDING",
+      createdAt: new Date()
+    };
+
+    const insertResult = await ordercool.insertOne(orderDoc);
+    const orderId = insertResult.insertedId;
+    console.log("✅ Order saved with ID:", orderId);
+
+    // 4️⃣ Prepare SSLCommerz POST data
+    const tran_id = "TXN_" + Date.now();
+
+    const postData = {
+      store_id: "testbox",
+      store_passwd: "qwerty",
+      total_amount: amount,
+      currency: "BDT",
+      tran_id: tran_id,
+      success_url: `http://localhost:${PORT}/success?orderId=${orderId}`,
+      fail_url: `http://localhost:${PORT}/fail?orderId=${orderId}`,
+      cancel_url: `http://localhost:${PORT}/cancel?orderId=${orderId}`,
+
+      product_name: "Test Product",
+      product_category: "Test",
+      product_profile: "general",
+
+      cus_name: "Test Customer",
+      cus_email: "test@email.com",
+      cus_add1: "Dhaka",
+      cus_city: "Dhaka",
+      cus_country: "Bangladesh",
+      cus_phone: "01700000000",
+
+      shipping_method: "NO",
+      num_of_item: products.length
+    };
+
+    console.log("📤 SSLCommerz POST Data:", postData);
+
+    // 5️⃣ Call SSLCommerz API
+    const response = await fetch(
+      "https://sandbox.sslcommerz.com/gwprocess/v4/api.php",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Accept: "application/json"
+        },
+        body: new URLSearchParams(postData).toString()
       }
+    );
+
+    const responseText = await response.text();
+
+    let data;
+    try {
+      data = JSON.parse(responseText);
     } catch (parseError) {
       console.error("❌ JSON Parse Error:", parseError);
-      res.json({ 
+      return res.json({
         error: "Invalid response from SSLCommerz",
         raw: responseText.substring(0, 300)
       });
     }
-    
-  } catch (error) {
-    console.error("❌ Fetch Error:", error);
-    res.json({ error: error.message });
+
+    // 6️⃣ Send response to frontend
+    if (data.status === "SUCCESS" && data.GatewayPageURL) {
+      res.json({
+        success: true,
+        url: data.GatewayPageURL,
+        orderId: orderId,
+        message: "Payment session created, order saved"
+      });
+    } else {
+      res.json({
+        error: data.failedreason || "Payment failed",
+        status: data.status,
+        details: data
+      });
+    }
+  } catch (err) {
+    console.error("❌ /pay API Error:", err);
+    res.json({ error: "Something went wrong" });
   }
 });
 

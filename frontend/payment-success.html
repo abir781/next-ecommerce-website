@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background-color: #f0f9ff;
+        }
+        .success {
+            color: green;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        button {
+            background: green;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="success">✅ Payment Successful!</h1>
+    <p id="message">Processing your payment...</p>
+    
+    <button onclick="goHome()">Continue Shopping</button>
+
+    <script>
+        // URL থেকে parameters পড়ুন
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('orderId');
+        const clearCart = urlParams.get('clearCart');
+        
+        console.log('Order ID:', orderId);
+        
+        // কার্ট ক্লিয়ার করুন
+        if (clearCart === 'true') {
+            console.log('Clearing cart from localStorage...');
+            
+            // localStorage থেকে cart remove করুন
+            localStorage.removeItem('cart');
+            
+            console.log('Cart cleared!');
+            
+            document.getElementById('message').textContent = 
+                `Order #${orderId} confirmed. Cart has been cleared.`;
+        }
+        
+        function goHome() {
+            window.location.href = 'index.html';
+        }
+        
+        // Automatically redirect after 5 seconds
+        setTimeout(goHome, 5000);
+    </script>
+</body>
+</html>

@@ -53,19 +53,43 @@
     
 
      <script>
-    async function pay() {
+   
 
-         const amount = window.totalAmount || 0;
-        
-        const res = await fetch('http://localhost:3000/pay', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ amount: amount })
-        });
-        const data = await res.json();
-        if(data.url) window.location.href = data.url;
-        else alert('Error: ' + data.error);
+       async function pay() {
+    // 1️⃣ amount
+    const amount = window.totalAmount || 0;
+
+    // 2️⃣ cart from localStorage
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    // 3️⃣ safety check
+    if (cart.length === 0) {
+        alert("Cart is empty");
+        return;
     }
+
+    // 4️⃣ send to backend
+    const res = await fetch('http://localhost:3000/pay', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            amount: amount,
+            products: cart   // ✅ backend expects this
+        })
+    });
+
+    localStorage.removeItem("cart");
+
+    const data = await res.json();
+
+    // 5️⃣ redirect to SSLCommerz
+    if (data.url) {
+        window.location.href = data.url;
+    } else {
+        alert('Error: ' + data.error);
+    }
+}
+
     </script>
 
    
