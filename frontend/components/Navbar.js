@@ -37,7 +37,7 @@ export function Navbar() {
         <h2 class="text-[28px] font-semibold">NEXT</h2>
     </div>
 
-    <div class="text-[24px] space-x-10 flex justify-center items-center">
+    <div id="foronlylogout" class="text-[24px] space-x-10 flex justify-center items-center">
       <i class="fa-regular fa-heart"></i>
      <a href="login.html">
            <i class="fa-solid fa-person"></i>
