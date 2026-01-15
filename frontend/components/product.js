@@ -93,6 +93,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   </div>
 `;
 const addToBagBtn = document.getElementById("add-to-bag-btn");
+if(product.stock<=0){
+  addToBagBtn.disabled = true;
+  addToBagBtn.textContent = "Out of Stock";
+  addToBagBtn.classList.add("bg-gray-500", "cursor-not-allowed");
+}
 addToBagBtn.addEventListener("click", () => {
   addToBag(product); // ✅ product available here
 });

@@ -567,7 +567,14 @@ app.get('/menproduct/:id', async (req, res) => {
       return res.status(404).send({ message: "Product not found" });
     }
 
-    res.send(product);
+    const stock = product.stock ?? 0;
+    const outOfStock = stock === 0;
+
+      res.json({
+    ...product,
+   
+    outOfStock
+  });
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: "Server error" });
@@ -720,16 +727,171 @@ app.get('/womanproduct/:id', async (req, res) => {
   }
 });
 
+// app.post("/success", async (req, res) => {
+//   const { orderId, tran_id } = req.query;
+
+//     const order = await ordercool.findOne({
+//     _id: new ObjectId(orderId)
+//   });
+
+    
+
+//   await ordercool.updateOne(
+//     { _id: new ObjectId(orderId) },
+//     { $set: { status: "CONFIRMED", paidAt: new Date(), transactionId: tran_id } }
+//   );
+
+//    res.redirect(`http://127.0.0.1:5501/payment-success.html?orderId=${orderId}&clearCart=true`);
+// });
+
+
+// ✅ শুধুমাত্র POST endpoint রাখুন
+// app.post("/success", async (req, res) => {
+//   try {
+//     const { orderId, tran_id } = req.query;
+
+//     console.log("✅ Success hit:", orderId, tran_id);
+
+//     // 1️⃣ Order খুঁজুন
+//     const order = await ordercool.findOne({
+//       _id: new ObjectId(orderId)
+//     });
+
+//     if (!order) {
+//       return res.send("Order not found");
+//     }
+
+//     // 2️⃣ Stock কমান (men এবং women collection থেকে)
+//     for (const item of order.products) {
+//       const productObjectId = new ObjectId(item.productId);
+
+//       // Men collection থেকে চেষ্টা করুন
+//       let result = await nextproductcollectionformen.updateOne(
+//         { _id: productObjectId },
+//         {
+//           $inc: {
+//             stock: -Number(item.quantity),
+//             sold: Number(item.quantity)
+//           }
+//         }
+//       );
+
+//       // Men collection এ না পেলে women collection এ চেষ্টা করুন
+//       if (result.matchedCount === 0) {
+//         await nextproductcollection.updateOne(
+//           { _id: productObjectId },
+//           {
+//             $inc: {
+//               stock: -Number(item.quantity),
+//               sold: Number(item.quantity)
+//             }
+//           }
+//         );
+//       }
+//     }
+
+//     // 3️⃣ Order status update করুন
+//     await ordercool.updateOne(
+//       { _id: new ObjectId(orderId) },
+//       { 
+//         $set: { 
+//           status: "CONFIRMED", 
+//           paidAt: new Date(), 
+//           transactionId: tran_id 
+//         } 
+//       }
+//     );
+
+//     // 4️⃣ Success page এ redirect করুন
+//     res.redirect(
+//       `http://127.0.0.1:5501/payment-success.html?orderId=${orderId}&clearCart=true`
+//     );
+//   } catch (err) {
+//     console.error("❌ Success error:", err);
+//     res.send("Something went wrong");
+//   }
+// });
+
+
 app.post("/success", async (req, res) => {
-  const { orderId, tran_id } = req.query;
+  try {
+    const { orderId, tran_id } = req.query;
 
-  await ordercool.updateOne(
-    { _id: new ObjectId(orderId) },
-    { $set: { status: "CONFIRMED", paidAt: new Date(), transactionId: tran_id } }
-  );
+    console.log("✅ Success hit:", orderId, tran_id);
 
-   res.redirect(`http://127.0.0.1:5501/payment-success.html?orderId=${orderId}&clearCart=true`);
+    // 1️⃣ Order খুঁজুন
+    const order = await ordercool.findOne({
+      _id: new ObjectId(orderId)
+    });
+
+    if (!order) {
+      return res.send("Order not found");
+    }
+
+    console.log("📦 Order found:", order);
+
+    // 2️⃣ Stock update করুন
+    for (const item of order.products) {
+      // ⚠️ item._id ব্যবহার করুন, item.productId নয়
+      const productObjectId = new ObjectId(item._id);
+      const quantity = Number(item.quantity);
+
+      console.log(`🔄 Updating product ${item._id}, quantity: ${quantity}`);
+
+      // Men collection এ চেষ্টা করুন
+      let result = await nextproductcollectionformen.updateOne(
+        { _id: productObjectId },
+        {
+          $inc: {
+            stock: -quantity,
+            sold: quantity
+          }
+        }
+      );
+
+      console.log(`Men collection result:`, result);
+
+      // Men collection এ না পেলে women collection এ চেষ্টা করুন
+      if (result.matchedCount === 0) {
+        let womenResult = await nextproductcollection.updateOne(
+          { _id: productObjectId },
+          {
+            $inc: {
+              stock: -quantity,
+              sold: quantity
+            }
+          }
+        );
+        console.log(`Women collection result:`, womenResult);
+      }
+    }
+
+    // 3️⃣ Order status update করুন
+    await ordercool.updateOne(
+      { _id: new ObjectId(orderId) },
+      { 
+        $set: { 
+          status: "CONFIRMED", 
+          paidAt: new Date(), 
+          transactionId: tran_id 
+        } 
+      }
+    );
+
+    console.log("✅ Order confirmed, stock updated");
+
+    // 4️⃣ Success page এ redirect করুন
+    res.redirect(
+      `http://127.0.0.1:5501/payment-success.html?orderId=${orderId}&clearCart=true`
+    );
+  } catch (err) {
+    console.error("❌ Success error:", err);
+    res.send("Something went wrong: " + err.message);
+  }
 });
+
+// ❌ GET endpoint টা মুছে দিন - দরকার নেই
+
 
 
 
